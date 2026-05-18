@@ -3,6 +3,7 @@
 .python-version
 .idea
 __pycache__/
+**/__pycache__/
 *.pyc
 *.pyo
 *.pyd
@@ -16,4 +17,3 @@ __pycache__/
 dist/
 build/
 *.egg
-./salary_management/__pycache__/
