@@ -9,7 +9,8 @@ from salary_app.models import Employee
 @pytest.mark.django_db
 def test_employee_can_be_created_with_required_fields():
     employee = Employee.objects.create(
-        full_name="Alice Johnson",
+        first_name="Alice",
+        last_name="Johnson",
         email="alice@example.com",
         job_title="Software Engineer",
         department="Engineering",
@@ -21,15 +22,22 @@ def test_employee_can_be_created_with_required_fields():
 
 
 @pytest.mark.django_db
-def test_employee_str_returns_full_name():
-    employee = Employee(full_name="Bob Smith")
+def test_full_name_property_combines_first_and_last():
+    employee = Employee(first_name="Bob", last_name="Smith")
+    assert employee.full_name == "Bob Smith"
+
+
+@pytest.mark.django_db
+def test_str_returns_full_name():
+    employee = Employee(first_name="Bob", last_name="Smith")
     assert str(employee) == "Bob Smith"
 
 
 @pytest.mark.django_db
 def test_salary_is_stored_as_decimal():
     employee = Employee.objects.create(
-        full_name="Carol White",
+        first_name="Carol",
+        last_name="White",
         email="carol@example.com",
         job_title="Designer",
         department="Product",
@@ -45,7 +53,8 @@ def test_salary_is_stored_as_decimal():
 @pytest.mark.django_db
 def test_is_active_defaults_to_true():
     employee = Employee.objects.create(
-        full_name="Dan Brown",
+        first_name="Dan",
+        last_name="Brown",
         email="dan@example.com",
         job_title="Analyst",
         department="Finance",
@@ -59,7 +68,8 @@ def test_is_active_defaults_to_true():
 @pytest.mark.django_db
 def test_created_at_is_set_automatically():
     employee = Employee.objects.create(
-        full_name="Eve Davis",
+        first_name="Eve",
+        last_name="Davis",
         email="eve@example.com",
         job_title="Manager",
         department="HR",
@@ -73,7 +83,8 @@ def test_created_at_is_set_automatically():
 @pytest.mark.django_db
 def test_updated_at_changes_on_save():
     employee = Employee.objects.create(
-        full_name="Frank Lee",
+        first_name="Frank",
+        last_name="Lee",
         email="frank@example.com",
         job_title="DevOps",
         department="Infrastructure",
@@ -90,7 +101,8 @@ def test_updated_at_changes_on_save():
 @pytest.mark.django_db
 def test_email_must_be_unique():
     Employee.objects.create(
-        full_name="Grace Hall",
+        first_name="Grace",
+        last_name="Hall",
         email="duplicate@example.com",
         job_title="QA",
         department="Engineering",
@@ -100,7 +112,8 @@ def test_email_must_be_unique():
     )
     with pytest.raises(IntegrityError):
         Employee.objects.create(
-            full_name="Another Person",
+            first_name="Another",
+            last_name="Person",
             email="duplicate@example.com",
             job_title="QA",
             department="Engineering",
@@ -111,9 +124,10 @@ def test_email_must_be_unique():
 
 
 @pytest.mark.django_db
-def test_full_name_cannot_be_blank():
+def test_first_name_cannot_be_blank():
     employee = Employee(
-        full_name="",
+        first_name="",
+        last_name="Smith",
         email="test@example.com",
         job_title="Engineer",
         department="Eng",
@@ -126,14 +140,37 @@ def test_full_name_cannot_be_blank():
 
 
 @pytest.mark.django_db
-def test_employees_ordered_by_full_name_by_default():
+def test_last_name_cannot_be_blank():
+    employee = Employee(
+        first_name="John",
+        last_name="",
+        email="test@example.com",
+        job_title="Engineer",
+        department="Eng",
+        country="India",
+        salary=Decimal("50000.00"),
+        hire_date="2023-01-01",
+    )
+    with pytest.raises(ValidationError):
+        employee.full_clean()
+
+
+@pytest.mark.django_db
+def test_employees_ordered_by_last_name_then_first_name():
     Employee.objects.create(
-        full_name="Zara Ahmed", email="zara@example.com", job_title="PM",
-        department="Product", country="India", salary=Decimal("70000.00"), hire_date="2023-01-01",
+        first_name="Zara", last_name="Ahmed", email="zara@example.com",
+        job_title="PM", department="Product", country="India",
+        salary=Decimal("70000.00"), hire_date="2023-01-01",
     )
     Employee.objects.create(
-        full_name="Aaron Chen", email="aaron@example.com", job_title="PM",
-        department="Product", country="India", salary=Decimal("72000.00"), hire_date="2023-01-01",
+        first_name="Aaron", last_name="Chen", email="aaron@example.com",
+        job_title="PM", department="Product", country="India",
+        salary=Decimal("72000.00"), hire_date="2023-01-01",
     )
-    names = list(Employee.objects.values_list("full_name", flat=True))
-    assert names == sorted(names)
+    Employee.objects.create(
+        first_name="Beth", last_name="Ahmed", email="beth@example.com",
+        job_title="Engineer", department="Eng", country="India",
+        salary=Decimal("68000.00"), hire_date="2023-01-01",
+    )
+    employees = list(Employee.objects.values_list("last_name", "first_name"))
+    assert employees == sorted(employees)
