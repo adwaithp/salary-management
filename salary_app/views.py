@@ -1,4 +1,6 @@
+from django.contrib.auth.models import User
 from rest_framework import viewsets, filters, status
+from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.views import APIView
@@ -28,6 +30,21 @@ class EmployeeViewSet(viewsets.ModelViewSet):
             return Employee.objects.filter(pk=profile.pk, is_active=True)
 
         return Employee.objects.none()
+
+    def perform_create(self, serializer):
+        password = self.request.data.get("password")
+        if not password:
+            raise ValidationError({"password": "Password is required when creating an employee."})
+
+        data = serializer.validated_data
+        user = User.objects.create_user(
+            username=data["email"],
+            email=data["email"],
+            password=password,
+            first_name=data["first_name"],
+            last_name=data["last_name"],
+        )
+        serializer.save(user=user)
 
     def destroy(self, request, *args, **kwargs):
         employee = self.get_object()
