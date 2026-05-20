@@ -19,15 +19,10 @@ services:
       context: .
       dockerfile: Dockerfile
     command: >
-      sh -c "python manage.py migrate &&
-             python manage.py create_hr_user
-               --email admin@company.com
-               --password admin123
-               --first-name Admin
-               --last-name User
-               --role admin || true &&
-             python manage.py seed_employees --clear &&
-             gunicorn salary_management.wsgi:application --bind 0.0.0.0:8000 --workers 2"
+      sh -c "uv run python manage.py migrate &&
+             uv run python manage.py create_hr_user --email admin@company.com --password admin123 --first-name Admin --last-name User --role admin || true &&
+             uv run python manage.py seed_employees --clear &&
+             uv run gunicorn salary_management.wsgi:application --bind 0.0.0.0:8000 --workers 2"
     ports:
       - "8000:8000"
     depends_on:
@@ -40,7 +35,7 @@ services:
       DB_PASSWORD: password
       DB_HOST: db
       DB_PORT: 5432
-      ALLOWED_HOSTS: "localhost,127.0.0.1,backend"
+      ALLOWED_HOSTS: "localhost,127.0.0.1,backend,0.0.0.0"
       CORS_ALLOWED_ORIGINS: "http://localhost:3000"
 
   frontend:

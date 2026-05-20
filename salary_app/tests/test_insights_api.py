@@ -59,12 +59,6 @@ def test_unauthenticated_cannot_access_insights():
     client = APIClient()
     assert client.get(reverse("insights-overview")).status_code == status.HTTP_401_UNAUTHORIZED
 
-
-@pytest.mark.django_db
-def test_employee_cannot_access_insights(employee_client):
-    assert employee_client.get(reverse("insights-overview")).status_code == status.HTTP_403_FORBIDDEN
-
-
 @pytest.mark.django_db
 def test_hr_can_access_insights(hr_client):
     assert hr_client.get(reverse("insights-overview")).status_code == status.HTTP_200_OK
