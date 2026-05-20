@@ -4,11 +4,11 @@ import { getEmployees, createEmployee, updateEmployee, deleteEmployee } from "..
 import { Plus, Search, Pencil, Trash2, Loader2, X, ChevronLeft, ChevronRight } from "lucide-react";
 
 const DEPARTMENTS = ["engineering","product","design","finance","hr","marketing","operations","sales","legal","data"];
-const ROLES = ["employee", "manager", "hr", "admin"];
+
 const EMPTY_FORM = {
   first_name: "", last_name: "", email: "", password: "",
   job_title: "", department: "engineering", country: "",
-  salary: "", hire_date: "", role: "employee",
+  salary: "", hire_date: "",
 };
 
 function Modal({ title, onClose, children }) {
@@ -70,23 +70,13 @@ function EmployeeForm({ initial, onSubmit, loading, isEdit }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
-        <div>
-          <label className={labelClass}>Department</label>
-          <select className={inputClass} value={form.department} onChange={set("department")}>
-            {DEPARTMENTS.map((d) => (
-              <option key={d} value={d}>{d.charAt(0).toUpperCase() + d.slice(1)}</option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label className={labelClass}>Role</label>
-          <select className={inputClass} value={form.role} onChange={set("role")}>
-            {ROLES.map((r) => (
-              <option key={r} value={r}>{r.charAt(0).toUpperCase() + r.slice(1)}</option>
-            ))}
-          </select>
-        </div>
+      <div>
+        <label className={labelClass}>Department</label>
+        <select className={inputClass} value={form.department} onChange={set("department")}>
+          {DEPARTMENTS.map((d) => (
+            <option key={d} value={d}>{d.charAt(0).toUpperCase() + d.slice(1)}</option>
+          ))}
+        </select>
       </div>
 
       <div className="grid grid-cols-2 gap-3">
@@ -115,7 +105,7 @@ export default function Employees() {
   const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
-  const [modal, setModal] = useState(null); // null | "add" | { type: "edit", employee } | { type: "delete", employee }
+  const [modal, setModal] = useState(null);
 
   const { data, isLoading } = useQuery({
     queryKey: ["employees", search, page],
@@ -139,20 +129,6 @@ export default function Employees() {
     mutationFn: deleteEmployee,
     onSuccess: () => { queryClient.invalidateQueries(["employees"]); setModal(null); },
   });
-
-  const roleBadge = (role) => {
-    const styles = {
-      hr: "bg-purple-100 text-purple-700",
-      admin: "bg-red-100 text-red-700",
-      manager: "bg-blue-100 text-blue-700",
-      employee: "bg-gray-100 text-gray-600",
-    };
-    return (
-      <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${styles[role] ?? styles.employee}`}>
-        {role}
-      </span>
-    );
-  };
 
   return (
     <div className="p-8">
@@ -194,7 +170,7 @@ export default function Employees() {
           <table className="w-full text-sm">
             <thead>
               <tr className="bg-gray-50 border-b border-gray-200">
-                {["Name", "Email", "Job Title", "Department", "Country", "Salary", "Role", ""].map((h) => (
+                {["Name", "Email", "Job Title", "Department", "Country", "Salary", ""].map((h) => (
                   <th key={h} className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">
                     {h}
                   </th>
@@ -212,7 +188,6 @@ export default function Employees() {
                   <td className="px-4 py-3 font-medium text-gray-900">
                     ${Number(emp.salary).toLocaleString()}
                   </td>
-                  <td className="px-4 py-3">{roleBadge(emp.role)}</td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2 justify-end">
                       <button

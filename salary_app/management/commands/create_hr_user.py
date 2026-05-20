@@ -1,21 +1,21 @@
+#create hr user
 from datetime import date
 from decimal import Decimal
 
 from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand
 
-from salary_app.models import Department, Employee, Role
+from salary_app.models import Department, Employee
 
 
 class Command(BaseCommand):
-    help = "Create an HR or Admin user with a linked Employee profile"
+    help = "Create an HR user with a linked Employee profile"
 
     def add_arguments(self, parser):
         parser.add_argument("--email",      required=True,  help="Login email")
         parser.add_argument("--password",   required=True,  help="Login password")
         parser.add_argument("--first-name", required=True,  dest="first_name")
         parser.add_argument("--last-name",  required=True,  dest="last_name")
-        parser.add_argument("--role",       default="hr",   choices=["hr", "admin"])
         parser.add_argument("--job-title",  default="HR Manager", dest="job_title")
         parser.add_argument("--department", default=Department.HR)
         parser.add_argument("--country",    default="")
@@ -48,9 +48,8 @@ class Command(BaseCommand):
             country=options["country"],
             salary=Decimal(options["salary"]),
             hire_date=date.today(),
-            role=options["role"],
         )
 
         self.stdout.write(self.style.SUCCESS(
-            f"Created {options['role'].upper()} user: {employee.full_name} ({email})"
+            f"Created HR user: {employee.full_name} ({email})"
         ))

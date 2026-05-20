@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'drf_spectacular',
     'rest_framework',
     'rest_framework_simplejwt',
     'django_filters',
@@ -59,6 +60,7 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ],
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_FILTER_BACKENDS": [
         "django_filters.rest_framework.DjangoFilterBackend",
         "rest_framework.filters.SearchFilter",
@@ -68,6 +70,11 @@ REST_FRAMEWORK = {
     "PAGE_SIZE": 50,
 }
 
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Salary Management API",
+    "DESCRIPTION": "API for managing employee salary data",
+    "VERSION": "1.0.0",
+}
 
 ROOT_URLCONF = 'salary_management.urls'
 

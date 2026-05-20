@@ -1,10 +1,8 @@
-from django.contrib.auth.models import User
 from rest_framework import viewsets, filters, status
-from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.views import APIView
+from django_filters.rest_framework import DjangoFilterBackend
 
 from salary_app import services
 from salary_app.models import Employee
@@ -15,26 +13,12 @@ class EmployeeViewSet(viewsets.ModelViewSet):
     serializer_class = EmployeeSerializer
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ["country", "department", "job_title", "role"]
+    filterset_fields = ["country", "department", "job_title"]
     search_fields = ["first_name", "last_name", "email", "job_title"]
     ordering_fields = ["last_name", "salary", "hire_date", "created_at"]
 
     def get_queryset(self):
         return Employee.objects.filter(is_active=True)
-
-    def perform_create(self, serializer):
-        password = self.request.data.get("password")
-        if not password:
-            raise ValidationError({"password": "Password is required."})
-        data = serializer.validated_data
-        user = User.objects.create_user(
-            username=data["email"],
-            email=data["email"],
-            password=password,
-            first_name=data["first_name"],
-            last_name=data["last_name"],
-        )
-        serializer.save(user=user)
 
     def destroy(self, request, *args, **kwargs):
         employee = self.get_object()
@@ -63,7 +47,9 @@ class CountrySummaryView(BaseInsightView):
 class JobTitleSummaryView(BaseInsightView):
     def get(self, request):
         country = request.query_params.get("country")
-        return Response(list(services.get_job_title_salary_by_country(self.get_base_queryset(), country=country)))
+        return Response(list(services.get_job_title_salary_by_country(
+            self.get_base_queryset(), country=country
+        )))
 
 
 class DepartmentSummaryView(BaseInsightView):

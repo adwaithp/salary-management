@@ -1,3 +1,4 @@
+#seed employee
 import random
 from datetime import date, timedelta
 from decimal import Decimal
@@ -5,7 +6,7 @@ from pathlib import Path
 
 from django.core.management.base import BaseCommand
 
-from salary_app.models import Department, Employee, Role
+from salary_app.models import Department, Employee
 
 
 COUNTRIES = [
@@ -127,7 +128,6 @@ class Command(BaseCommand):
                 country=random.choice(COUNTRIES),
                 salary=random_salary(job_title),
                 hire_date=random_hire_date(),
-                role=Role.EMPLOYEE,
                 is_active=True,
             ))
 

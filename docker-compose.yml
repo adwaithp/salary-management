@@ -20,7 +20,7 @@ services:
       dockerfile: Dockerfile
     command: >
       sh -c "uv run python manage.py migrate &&
-             uv run python manage.py create_hr_user --email admin@company.com --password admin123 --first-name Admin --last-name User --role admin || true &&
+             uv run python manage.py create_hr_user --email admin@company.com --password admin123 --first-name Admin --last-name User || true &&
              uv run python manage.py seed_employees --clear &&
              uv run gunicorn salary_management.wsgi:application --bind 0.0.0.0:8000 --workers 2"
     ports:

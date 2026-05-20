@@ -1,7 +1,8 @@
+#test services
 import pytest
 from decimal import Decimal
 
-from salary_app.models import Employee, Department, Role
+from salary_app.models import Employee, Department
 from salary_app.services import (
     get_org_overview,
     get_country_salary_summary,
@@ -16,7 +17,6 @@ def make_employee(**kwargs):
         job_title="Engineer",
         department=Department.ENGINEERING,
         hire_date="2023-01-01",
-        role=Role.EMPLOYEE,
         is_active=True,
     )
     defaults.update(kwargs)

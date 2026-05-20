@@ -2,13 +2,6 @@ from django.conf import settings
 from django.db import models
 
 
-class Role(models.TextChoices):
-    EMPLOYEE = "employee", "Employee"
-    MANAGER = "manager", "Manager"
-    HR = "hr", "HR"
-    ADMIN = "admin", "Admin"
-
-
 class Department(models.TextChoices):
     DATA = "data", "Data"
     DESIGN = "design", "Design"
@@ -38,7 +31,6 @@ class Employee(models.Model):
     country = models.CharField(max_length=100)
     salary = models.DecimalField(max_digits=12, decimal_places=2)
     hire_date = models.DateField()
-    role = models.CharField(max_length=20, choices=Role.choices, default=Role.EMPLOYEE)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
