@@ -35,7 +35,7 @@ See `artifacts/` for design notes, architecture decisions, and a log of how AI w
 ## Quick Start (Docker)
 
 ```bash
-git clone <repo-url>
+git clone https://github.com/adwaithp/salary-management.git
 cd salary-management
 docker-compose up --build
 ```
